@@ -19,11 +19,11 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 //TODO: move these later... shouldn't be here
-const val AWS_ACCESS_KEY_ID: String = "AKIAIKOYMIY3YKTMKLHQ"
-const val AWS_SECRET_ACCESS_KEY: String = "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"
-const val USER_POOL_ID: String = "us-east-1_8jXAyv3iW"
-const val CLIENT_ID: String = "6ci3qn66kp1pnjonkdmk19smet"
-const val CLIENT_SECRET: String = "1bqm3d6u7akafnaveid24atgcpfkbb7d34ec7a31n7ob7o28s6qf"
+const val AWS_ACCESS_KEY_ID: String = "INSERT ACCESS KEY ID HERE"
+const val AWS_SECRET_ACCESS_KEY: String = "INSERT YOUR AWS KEY HERE"
+const val USER_POOL_ID: String = "INSERT POOL ID HERE"
+const val CLIENT_ID: String = "INSERT CLIENT ID HERE"
+const val CLIENT_SECRET: String = "INSERT CLIENT STRING HERE"
 const val HMAC_SHA_256: String = "HmacSHA256"
 
 class LoginActivity : AppCompatActivity() {
