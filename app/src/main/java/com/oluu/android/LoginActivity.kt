@@ -18,12 +18,11 @@ import kotlinx.android.synthetic.main.activity_login.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-//TODO: move these later... shouldn't be here
-const val AWS_ACCESS_KEY_ID: String = "INSERT ACCESS KEY ID HERE"
-const val AWS_SECRET_ACCESS_KEY: String = "INSERT YOUR AWS KEY HERE"
-const val USER_POOL_ID: String = "INSERT POOL ID HERE"
-const val CLIENT_ID: String = "INSERT CLIENT ID HERE"
-const val CLIENT_SECRET: String = "INSERT CLIENT STRING HERE"
+val AWS_ACCESS_KEY_ID: String = System.getenv("AWS_ACCESS_KEY_ID")
+val AWS_SECRET_ACCESS_KEY: String = System.getenv("AWS_SECRET_ACCESS_KEY")
+val USER_POOL_ID: String = System.getenv("USER_POOL_ID")
+val USER_POOL_CLIENT_ID: String = System.getenv("USER_POOL_CLIENT_ID")
+val USER_POOL_CLIENT_SECRET: String = System.getenv("USER_POOL_CLIENT_SECRET")
 const val HMAC_SHA_256: String = "HmacSHA256"
 
 class LoginActivity : AppCompatActivity() {
@@ -32,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         // cognito setup
         val credentials: AWSCredentials = object: BasicAWSCredentials(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY) {}
-        val userPool = CognitoUserPool(baseContext, USER_POOL_ID, CLIENT_ID, CLIENT_SECRET, Regions.US_EAST_1)
+        val userPool = CognitoUserPool(baseContext, USER_POOL_ID, USER_POOL_CLIENT_ID, USER_POOL_CLIENT_SECRET, Regions.US_EAST_1)
         val identityProvider = AmazonCognitoIdentityProviderClient(credentials)
         val userAttributes = CognitoUserAttributes()
         /************************************
@@ -85,12 +84,12 @@ class LoginActivity : AppCompatActivity() {
                 // if the UsernameExistsException occurs lets attempt to log them in
                 if (exception.toString().contains("UsernameExistsException", false)) {
                     val mac = Mac.getInstance(HMAC_SHA_256)
-                    val signingKey = SecretKeySpec(CLIENT_SECRET.toByteArray(), HMAC_SHA_256)
+                    val signingKey = SecretKeySpec(USER_POOL_CLIENT_SECRET?.toByteArray(), HMAC_SHA_256)
                     mac.init(signingKey)
                     mac.update(emailText.text.toString().toByteArray())
-                    val rawHmac = mac.doFinal(CLIENT_ID.toByteArray())
+                    val rawHmac = mac.doFinal(USER_POOL_CLIENT_ID?.toByteArray())
                     val secretHash = String(Base64.encode(rawHmac))
-                    val user: CognitoUser = object: CognitoUser(userPool, emailText.text.toString(), CLIENT_ID, CLIENT_SECRET, secretHash, identityProvider, applicationContext) {}
+                    val user: CognitoUser = object: CognitoUser(userPool, emailText.text.toString(), USER_POOL_CLIENT_ID, USER_POOL_CLIENT_SECRET, secretHash, identityProvider, applicationContext) {}
                     user.getSessionInBackground(authenticationHandler)
                 }
                 //TODO: Sign up failed, code check the exception for cause and perform remedial actions.
